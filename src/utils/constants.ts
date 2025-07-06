@@ -1,0 +1,1 @@
+export const API_URL = "https://6867b50de3fefb261edfb282.mockapi.io/nolte/api/v1/order"
