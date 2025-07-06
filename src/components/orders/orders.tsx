@@ -17,12 +17,14 @@ import { useNavigate } from "react-router";
 import DeleteOrder from "../deleteOrder/deleteOrder";
 import { API_URL } from "../../utils/constants";
 import type { Order } from "../orderForm/schema";
+import { EmptyFallback } from "../../common/emptyFallback";
+import Loader from "../../common/loader/loader";
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
 export default function Orders() {
   const [orders, setOrders] = useState<Order[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [deleteTarget, setDeleteTarget] = useState<Order | null>(null);
   const [mutate, setMutate] = useState<boolean>(false);
 
@@ -157,13 +159,15 @@ export default function Orders() {
       minWidth: 180,
     },
   ];
+  if (isLoading) return <Loader />;
+  if (!isLoading && orders.length === 0)
+    return <EmptyFallback message="No Orders found." />;
 
   return (
     <Box p={2}>
       <Button variant="contained" onClick={handleCreate} sx={{ mb: 2 }}>
         Create Order
       </Button>
-
       <div className="ag-theme-alpine">
         <AgGridReact<Order>
           theme={themeMaterial}
