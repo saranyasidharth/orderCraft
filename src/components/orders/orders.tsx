@@ -74,6 +74,7 @@ export default function Orders() {
       headerName: "User",
       field: "name",
       flex: 1,
+      minWidth: 180,
       cellRenderer: (params: ICellRendererParams<Order>) => {
         const order = params.data;
         if (!order) return null;
