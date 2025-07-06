@@ -11,8 +11,8 @@ function App() {
         <Route index element={<Orders />} />
         <Route path="create" element={<CreateOrder />} />
         <Route path=":id/edit" element={<EditOrder />} />
-        <Route path="*" element={<Orders />} />
       </Route>
+      <Route path="*" element={<Navigate to="/orders" replace />} />
     </Routes>
   );
 }

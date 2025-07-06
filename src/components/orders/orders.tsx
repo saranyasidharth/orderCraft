@@ -1,6 +1,5 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { AgGridReact } from "ag-grid-react";
-
 import axios from "axios";
 import { Avatar, Button } from "@mui/material";
 import { themeMaterial } from "ag-grid-community";
@@ -21,6 +20,10 @@ export default function Orders() {
   const [deleteTarget, setDeleteTarget] = useState<Order | null>(null);
   const [mutate, setMutate] = useState<boolean>(false);
 
+  const pagination = true;
+  const paginationPageSize = 10;
+  const paginationPageSizeSelector = [10, 20, 50, 100];
+
   const { enqueueSnackbar } = useSnackbar();
   const navigate = useNavigate();
 
@@ -38,21 +41,27 @@ export default function Orders() {
     })();
   }, [mutate]);
 
-  const pagination = true;
-  const paginationPageSize = 10;
-  const paginationPageSizeSelector = [10, 20, 50, 100];
+  const handleCreate = () => {
+    navigate("create");
+  };
 
   const handleEdit = (order: Order) => {
     navigate(`${order.id}/edit`);
   };
 
-  const handleDelete = async () => {
+  const handleDelete = useCallback(async () => {
     if (!deleteTarget) return;
-    await axios.delete(`${API_URL}/${deleteTarget.id}`);
-    enqueueSnackbar("Order deleted successfully", { variant: "success" });
-    setDeleteTarget(null);
-    setMutate((prev) => !prev);
-  };
+
+    try {
+      await axios.delete(`${API_URL}/${deleteTarget.id}`);
+      enqueueSnackbar("Order deleted successfully", { variant: "success" });
+      setMutate((prev) => !prev);
+    } catch (err) {
+      enqueueSnackbar("Failed to delete order", { variant: "error" });
+    } finally {
+      setDeleteTarget(null);
+    }
+  }, [deleteTarget, enqueueSnackbar]);
 
   const columns: ColDef<Order>[] = [
     {
@@ -141,10 +150,6 @@ export default function Orders() {
       minWidth: 180,
     },
   ];
-
-  const handleCreate = () => {
-    navigate("create");
-  };
 
   return (
     <div style={{ height: "100vh", padding: 16 }}>

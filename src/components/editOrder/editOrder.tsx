@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import { API_URL } from "../../utils/constants";
 import axios from "axios";
@@ -9,11 +9,12 @@ import Loader from "../../common/loader/loader";
 
 export default function EditOrder() {
   const { id } = useParams();
+  const { enqueueSnackbar } = useSnackbar();
+  const navigate = useNavigate();
+ 
   const [order, setOrder] = useState<Order | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const { enqueueSnackbar } = useSnackbar();
-  const navigate = useNavigate();
 
   useEffect(() => {
     (async () => {
@@ -29,23 +30,41 @@ export default function EditOrder() {
     })();
   }, [id]);
 
-  const defaultValues: OrderSchemaType | undefined = order
-    ? {
-        id: order.id,
-        name: order.name,
-        avatar: order.avatar,
-        client: order.client,
-        uniqueid: order.uniqueid,
-        product: order.product,
-        color: order.color,
-        company: order.company,
-        showroom: order.showroom,
-        country: order.country,
-        price1: order.price1,
-        price2: order.price2,
-        loadingDate: order.loadingDate,
-      }
-    : undefined;
+  const defaultValues: OrderSchemaType | undefined = useMemo(() => {
+    if (!order) return undefined;
+
+    const {
+      id,
+      name,
+      avatar,
+      client,
+      uniqueid,
+      product,
+      color,
+      company,
+      showroom,
+      country,
+      price1,
+      price2,
+      loadingDate,
+    } = order;
+
+    return {
+      id,
+      name,
+      avatar,
+      client,
+      uniqueid,
+      product,
+      color,
+      company,
+      showroom,
+      country,
+      price1,
+      price2,
+      loadingDate,
+    };
+  }, [order]);
 
   const handleSubmit = async (data: OrderSchemaType) => {
     try {
