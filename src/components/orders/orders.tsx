@@ -1,14 +1,20 @@
 import { useCallback, useEffect, useState } from "react";
 import { AgGridReact } from "ag-grid-react";
 import axios from "axios";
-import { Avatar, Button } from "@mui/material";
-import { themeMaterial } from "ag-grid-community";
-import type { ColDef, ICellRendererParams } from "ag-grid-community";
-import styles from "./orders.module.scss";
-import { ModuleRegistry, AllCommunityModule } from "ag-grid-community";
+import Avatar from "@mui/material/Avatar";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import {
+  ModuleRegistry,
+  AllCommunityModule,
+  themeMaterial,
+  type ColDef,
+  type ICellRendererParams,
+} from "ag-grid-community";
 import { useSnackbar } from "notistack";
-import DeleteOrder from "../deleteOrder/deleteOrder";
 import { useNavigate } from "react-router";
+
+import DeleteOrder from "../deleteOrder/deleteOrder";
 import { API_URL } from "../../utils/constants";
 import type { Order } from "../orderForm/schema";
 
@@ -20,12 +26,12 @@ export default function Orders() {
   const [deleteTarget, setDeleteTarget] = useState<Order | null>(null);
   const [mutate, setMutate] = useState<boolean>(false);
 
+  const { enqueueSnackbar } = useSnackbar();
+  const navigate = useNavigate();
+
   const pagination = true;
   const paginationPageSize = 10;
   const paginationPageSizeSelector = [10, 20, 50, 100];
-
-  const { enqueueSnackbar } = useSnackbar();
-  const navigate = useNavigate();
 
   useEffect(() => {
     (async () => {
@@ -104,7 +110,7 @@ export default function Orders() {
       headerName: "Price 2",
       field: "price2",
       type: "numericColumn",
-      valueGetter: (params) => parseFloat(params.data?.price1 ?? "0"),
+      valueGetter: (params) => parseFloat(params.data?.price2 ?? "0"),
       maxWidth: 120,
     },
     {
@@ -152,14 +158,12 @@ export default function Orders() {
   ];
 
   return (
-    <div style={{ height: "100vh", padding: 16 }}>
-      <Button variant="contained" onClick={handleCreate}>
+    <Box p={2}>
+      <Button variant="contained" onClick={handleCreate} sx={{ mb: 2 }}>
         Create Order
       </Button>
-      <div
-        className={`ag-theme-alpine ${styles["custom-grid"]}`}
-        style={{ width: "100%" }}
-      >
+
+      <div className="ag-theme-alpine">
         <AgGridReact<Order>
           theme={themeMaterial}
           rowData={orders}
@@ -182,8 +186,8 @@ export default function Orders() {
         onCancel={() => setDeleteTarget(null)}
         onConfirm={handleDelete}
         title="Delete Order"
-        description={`Are you sure you want to delete this order?`}
+        description="Are you sure you want to delete this order?"
       />
-    </div>
+    </Box>
   );
 }

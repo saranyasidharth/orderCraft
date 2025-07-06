@@ -1,4 +1,6 @@
-import { TextField, Button, Typography } from "@mui/material";
+import TextField from "@mui/material/TextField";
+import Button from "@mui/material/Button";
+import Typography from "@mui/material/Typography";
 import { useForm, Controller, type FieldErrors } from "react-hook-form";
 import { orderSchema, type OrderSchemaType } from "./schema";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
@@ -6,6 +8,7 @@ import dayjs from "dayjs";
 import { useNavigate } from "react-router";
 import styles from "./orderForm.module.scss";
 import { yupResolver } from "@hookform/resolvers/yup";
+import Paper from "@mui/material/Paper";
 
 type Props = {
   defaultValues?: OrderSchemaType;
@@ -28,10 +31,19 @@ export default function OrderForm({ defaultValues, onSubmit }: Props) {
 
   const navigate = useNavigate();
 
+  const isEdit = !!defaultValues?.id;
+
+  const handleBack = () => navigate("..");
+  const handleClear = () => reset();
+
+  const onError = (error: FieldErrors<OrderSchemaType>) => {
+    console.error(error);
+  };
+
   const renderField = (
     name: keyof OrderSchemaType,
     label: string,
-    type: string = "text"
+    type = "text"
   ) => (
     <Controller
       name={name}
@@ -44,28 +56,16 @@ export default function OrderForm({ defaultValues, onSubmit }: Props) {
           fullWidth
           error={!!errors[name]}
           helperText={errors[name]?.message ?? ""}
+          variant="outlined"
+          size="medium"
         />
       )}
     />
   );
 
-  const isEdit = !!defaultValues?.id;
-
-  const handleBack = () => {
-    navigate("..");
-  };
-
-  const handleClear = () => {
-    reset();
-  };
-
-  const onError = (error: FieldErrors<OrderSchemaType>) => {
-    console.error(error);
-  };
-
   return (
-    <div className={styles.root}>
-      <Typography variant="h4">
+    <Paper elevation={2} className={styles.root}>
+      <Typography variant="h5" fontWeight={600}>
         {isEdit ? "Edit Order" : "Create Order"}
       </Typography>
 
@@ -107,17 +107,19 @@ export default function OrderForm({ defaultValues, onSubmit }: Props) {
           />
         </div>
         <div className={styles.actions}>
-          <Button onClick={handleBack}>Back</Button>
+          <Button onClick={handleBack} variant="outlined">
+            Back
+          </Button>
           {!isEdit && (
             <Button onClick={handleClear} variant="outlined">
               Clear
             </Button>
           )}
           <Button type="submit" variant="contained">
-            {isEdit ? "Save changes" : "Create"}
+            {isEdit ? "Save Changes" : "Create"}
           </Button>
         </div>
       </form>
-    </div>
+    </Paper>
   );
 }
