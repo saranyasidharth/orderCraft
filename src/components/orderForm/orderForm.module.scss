@@ -1,0 +1,30 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.formInputs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  @media (width < 600px) {
+    grid-template-columns: 1fr;
+  }
+}
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  column-gap: 24px;
+  align-items: center;
+  margin-top: 24px;
+  @media (width < 600px) {
+    flex-direction: column-reverse;
+    row-gap: 16px;
+    width: 100%;
+    margin-top: 0px;
+
+    button {
+      width: 100%;
+    }
+  }
+}
